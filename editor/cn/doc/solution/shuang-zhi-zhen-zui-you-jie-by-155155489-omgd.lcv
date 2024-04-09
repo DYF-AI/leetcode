@@ -1,0 +1,33 @@
+### 解题思路
+
+此处撰写解题思路
+
+### 代码
+
+* java
+
+```java
+class Solution {
+    public int trap(int[] height) {
+        int start = 0, end = height.length - 1, i = start, j = end;
+        int volume = 0;
+        while (i < j) {
+            if (height[i] < height[j]) {
+                if (height[++i] < height[start]) {
+                    volume += height[start] - height[i];
+                } else {
+                    start = i;
+                }
+            } else {
+                if (height[--j] < height[end]) {
+                    volume += height[end] - height[j];
+                } else {
+                    end = j;
+                }
+            }
+        }
+        return volume;
+    }
+}
+```
+
