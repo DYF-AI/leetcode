@@ -1,0 +1,78 @@
+> Problem: [41. 缺失的第一个正数](https://leetcode.cn/problems/first-missing-positive/description/)
+
+[TOC]
+
+# 思路
+
+&emsp;&emsp;设数组长度为 $ n $, 则答案的取值范围是 $ [1, n + 1] $. 又因为数组只有 $ n $ 位，所以我们只用依次判断 $ [1, n] $ 内的数字是否出现即可，若都出现，则返回 $ n + 1 $. 所以我们可以先进行一次遍历，将 $ [1, n] $ 以外的数字全部取 $ 0 $.
+
+&emsp;&emsp;设 $ hash\_size = n + 1 $, 则此时数组的任意元素都有 $ nums[i] \ \%\ hash\_size == nums[i] $, 此时我们可以将数组看成一个哈希表，如果数字 $ x $ 出现，则给 $ nums[x - 1] $ 加上 $ hash\_size $. **这样既保留了原始数组信息，又能够作为哈希表记录某数字是否出现。**
+
+&emsp;&emsp;遍历数组，若 $ nums[i] < hash\_size $, 则说明 $ i + 1 $ 没有出现，返回 $ i + 1 $. 若数组所有数字都大于等于 $ hash\_size $, 则返回 $ n + 1 $.
+
+> 小技巧：
+
+&emsp;&emsp;为了防止某数字多次出现，导致某个元素加上了过多的 $ hash\_size $ 而导致溢出，可以在每次加 $ hash\_size $ 之前先取余，这样最多只会保留一个 $ hash\_size $. （本题不会溢出，但这是一个好习惯。）
+
+# Code
+
+* []
+
+```C
+int firstMissingPositive(int* nums, int numsSize) {
+    int hash_size = numsSize + 1;
+    // 可能的答案为1, 2, ..., numsSize + 1
+    // 处理掉取值范围外的数
+    for(int i = 0; i < numsSize; i++) {
+        if(nums[i] <= 0 || nums[i] >= hash_size) {
+            nums[i] = 0;
+        }
+    }
+    for(int i = 0; i < numsSize; i++) {
+        if(nums[i] % hash_size != 0) {
+            int pos = (nums[i] % hash_size) - 1;
+            // 先取余再加，防止数字过大
+            nums[pos] = (nums[pos] % hash_size) + hash_size;
+        }
+    }
+    for(int i = 0; i < numsSize; i++) {
+        if(nums[i] < hash_size) {
+            return i + 1;
+        }
+    }
+    return hash_size;
+}
+```
+
+* []
+
+```Python
+class Solution:
+    def firstMissingPositive(self, nums: List[int]) -> int:
+        n = len(nums)
+        hash_size = n + 1
+        # 可能的答案为1, 2, ..., n + 1
+        # 处理掉取值范围外的数
+        for i in range(n):
+            if nums[i] <= 0 or nums[i] >= hash_size:
+                nums[i] = 0
+        for i in range(n):
+            if nums[i] % hash_size != 0:
+                pos = (nums[i] % hash_size) - 1
+                # 先取余再加，防止数字过大
+                nums[pos] = (nums[pos] % hash_size) + hash_size
+        for i in range(n):
+            if nums[i] < hash_size:
+                return i + 1
+        return hash_size
+```
+
+# 复杂度
+
+- 时间复杂度：$O(n)$. 只遍历三次字符串。
+
+- 空间复杂度：$O(1)$. 仅使用常数个变量。
+
+# END
+
+&emsp;&emsp;码字不易，点个赞再走呗！
